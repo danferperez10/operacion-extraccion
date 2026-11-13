@@ -33,7 +33,14 @@ Abre http://localhost:8000/ en Chrome o Edge. Necesitas conexión a internet par
 
 ## Publicar en GitHub Pages
 
-En tu repositorio, abre **Settings → Pages**, selecciona **Deploy from a branch**, rama **main**, directorio **/(root)** y guarda. GitHub Pages publicará el archivo `index.html`.
+El repositorio incluye `.github/workflows/pages.yml`, que publica automáticamente los archivos del juego.
+
+Para habilitar la publicación por primera vez:
+1. Abre **Settings → Pages** en GitHub.
+2. En **Build and deployment → Source**, selecciona **GitHub Actions**.
+3. Abre **Actions → Publicar Operación Extracción** y, si la ejecución anterior falló porque Pages estaba desactivado, pulsa **Re-run all jobs**.
+
+Después de un despliegue correcto, visita https://danferperez10.github.io/operacion-extraccion/. Las siguientes actualizaciones de la rama `main` se publicarán automáticamente.
 
 ## Estructura
 
