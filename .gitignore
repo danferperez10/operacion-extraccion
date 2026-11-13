@@ -1,0 +1,11 @@
+# Dependencias y archivos locales
+node_modules/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
+*.zip
+__pycache__/
+.env
+.env.*
