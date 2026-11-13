@@ -1,71 +1,63 @@
-# 🎮 Operación Extracción — FPS 3D
+# 🎮 Operación Extracción — FPS 3D low-poly
 
-Juego de disparos en primera persona desarrollado con **Three.js r160 y WebGL**. La misión es atravesar una instalación infestada de zombis, administrar la munición y llegar a la zona de extracción.
+Juego de supervivencia y disparos en primera persona desarrollado con **Three.js r160 y WebGL**. Tu objetivo es atravesar una instalación infestada de zombis, recoger munición y llegar a la zona de extracción.
 
-**Jugar online:** después de activar GitHub Pages, el enlace habitual será `https://TU_USUARIO.github.io/operacion-extraccion/` si el repositorio se llama `operacion-extraccion`.
+**Juega online:** https://danferperez10.github.io/operacion-extraccion/ (estará disponible una vez que actives GitHub Pages).
 
-## Cómo jugar
-
-1. Abre el enlace del juego desde un navegador de escritorio compatible con WebGL.
-2. Pulsa **INICIAR MISIÓN** y haz clic en la pantalla si es necesario para capturar el mouse.
-3. Derrota o esquiva a los zombis hasta llegar a la zona de extracción.
+## Controles
 
 | Tecla | Acción |
 |---|---|
 | W / A / S / D | Moverse |
 | Mouse | Apuntar |
 | Clic izquierdo | Disparar |
-| 1 / 2 | Cambiar de arma |
+| 1 / 2 | Cambiar arma |
 | R | Recargar |
 | **Espacio (mantener)** | **Agacharse** |
-| Shift | Correr hacia delante |
-| T | Linterna |
+| Shift | Correr |
+| T | Encender o apagar linterna |
 | Q | Cambiar calidad gráfica |
-| F3 | Ver FPS y diagnóstico |
+| F3 | Ver estadísticas |
 | F | Pantalla completa |
-| Esc | Pausar |
+| Esc | Pausa |
 
-## Ejecutar en tu PC
+## Jugar localmente
 
-El juego usa módulos JavaScript y modelos GLB, por lo que necesita un servidor web local (no abras el HTML directamente con doble clic).
+Abre una terminal en esta carpeta y ejecuta:
 
 ```bash
 python -m http.server 8000
 ```
 
-Abre `http://localhost:8000/` en Chrome o Edge. No hace falta instalar npm, Node.js ni compilar el proyecto. Se necesita conexión a internet para descargar Three.js desde jsDelivr.
+Abre http://localhost:8000/ en Chrome o Edge. Necesitas conexión a internet para cargar Three.js desde el CDN. No requiere npm ni compilación.
 
-## Publicarlo con GitHub Pages
+## Publicar en GitHub Pages
 
-Hay instrucciones paso a paso en **[PUBLICAR_EN_GITHUB.md](PUBLICAR_EN_GITHUB.md)**. El proyecto ya tiene `index.html` en la raíz y las rutas de recursos son relativas; no requiere compilación.
+En tu repositorio, abre **Settings → Pages**, selecciona **Deploy from a branch**, rama **main**, directorio **/(root)** y guarda. GitHub Pages publicará el archivo `index.html`.
 
 ## Estructura
 
 ```text
-index.html                 Pantalla de inicio y HUD
-main.js                    Lógica del juego
-assets/models/             Modelos 3D GLB (5 archivos)
-assets/audio/              Grito de zombi
-ASSET_CREDITS.md           Autores, fuentes, licencias y advertencias
-PUBLICAR_EN_GITHUB.md     Guía de publicación
-.nojekyll                  Evita la compilación Jekyll en GitHub Pages
-.gitignore                 Archivos locales excluidos de Git
+index.html
+main.js
+assets/
+  models/
+    desert_eagle_fp.glb
+    desert_eagle_gun.glb
+    ak74m.glb
+    zombie_soldier.glb
+    zombie_tank.glb
+ASSET_CREDITS.md
+PUBLICAR_EN_GITHUB.md
+.nojekyll
+.gitignore
+.gitattributes
 ```
 
-## Características
+## Versión ligera
 
-- Dos armas: Desert Eagle y AK-74M, con cargador y reserva de munición.
-- Tres tipos de enemigos: soldado, corredor y tanque.
-- Cajas para recoger munición durante el recorrido.
-- Iluminación dinámica, efectos gráficos y opciones de calidad.
-- Diagnóstico básico de rendimiento con **F3**.
+Los cinco modelos GLB se recrearon como **versiones low-poly nuevas, sin texturas** para poder subirlos directamente y reducir drásticamente el peso. Los gráficos y las animaciones de armas son bastante más sencillos que en los modelos detallados originales. Mantienen los nombres y clips básicos esperados por el código, pero aún hace falta probar una partida completa desde un navegador.
 
-## Rendimiento
+El código admite sonidos opcionales en `assets/audio/`; cuando faltan algunos archivos, usa efectos sintetizados mediante Web Audio API.
 
-Si va lento, pulsa **Q** hasta seleccionar calidad baja. Se puede usar **F3** para revisar FPS y cantidad de geometrías/texturas. El juego utiliza resolución dinámica, reutilización de efectos y oculta zombis lejanos. La ejecución depende de las capacidades WebGL del navegador y del equipo.
-
-## Recursos y derechos
-
-Consulta [ASSET_CREDITS.md](ASSET_CREDITS.md) antes de publicar. El repositorio incluye contenido de terceros con licencias y derechos que deben respetarse. En particular, conviene revisar los derechos de los personajes de los modelos de zombis y la procedencia del audio. No se incluye una licencia general del código porque su titular no ha escogido una todavía.
-
-Proyecto de práctica académica desarrollado con Three.js.
+Revisa [ASSET_CREDITS.md](ASSET_CREDITS.md) para más información.
