@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Operación Extracción — Juego 3D</title>
+<meta name="description" content="Operación Extracción: juego FPS 3D de supervivencia contra zombis. Juega gratis desde tu navegador.">
+<style>
+*{box-sizing:border-box}
+body{margin:0;overflow:hidden;background:#000;font-family:'Segoe UI',system-ui,sans-serif;color:#e8efe8;user-select:none}
+canvas{display:block;width:100vw;height:100vh}
+#hud{position:fixed;inset:0;pointer-events:none;display:none}
+#cross{position:absolute;left:50%;top:50%;width:22px;height:22px;transform:translate(-50%,-50%)}
+#cross:before,#cross:after{content:"";position:absolute;background:#fff;opacity:.85}
+#cross:before{left:10px;top:0;width:2px;height:22px;clip-path:polygon(0 0,100% 0,100% 35%,0 35%,0 65%,100% 65%,100% 100%,0 100%)}
+#cross:after{top:10px;left:0;height:2px;width:22px;clip-path:polygon(0 0,35% 0,35% 100%,0 100%,65% 100%,65% 0,100% 0,100% 100%)}
+#hit{position:absolute;left:50%;top:50%;width:34px;height:34px;transform:translate(-50%,-50%) rotate(45deg);border:2px solid #ff4040;opacity:0;transition:opacity .25s}
+.panel{position:absolute;background:rgba(8,14,10,.62);border:1px solid rgba(120,255,160,.25);border-radius:8px;padding:10px 16px;backdrop-filter:blur(4px)}
+#mission{left:20px;top:20px;font-size:14px;line-height:1.6}
+#mission b{color:#7dff9b}
+#ammoBox{right:24px;bottom:24px;text-align:right}
+#wname{font-size:13px;letter-spacing:3px;color:#9fd9ad}
+#ammo{font-size:52px;font-weight:700;line-height:1}
+#res{font-size:22px;color:#8aa393;margin-left:8px}
+#rwrap{height:4px;background:rgba(255,255,255,.12);margin-top:8px;border-radius:2px;overflow:hidden}
+#rbar{height:100%;width:0;background:#7dff9b}
+#hint{position:absolute;left:50%;top:60%;transform:translateX(-50%);font-size:20px;font-weight:700;letter-spacing:3px;color:#ffc857;text-shadow:0 2px 8px #000}
+#crouch{left:20px;bottom:24px;font-size:13px;letter-spacing:3px;color:#7dff9b;opacity:0;transition:opacity .2s}
+#ammo.low{color:#ff5a4a}
+#slots{left:50%;bottom:24px;transform:translateX(-50%);display:flex;gap:10px;padding:8px}
+.slot{padding:6px 14px;border-radius:6px;border:1px solid #3a5a44;color:#6f8f78;font-size:13px}
+.slot.on{border-color:#7dff9b;color:#7dff9b;background:rgba(125,255,155,.12)}
+#msg{left:50%;top:68%;transform:translateX(-50%);background:none;border:0;font-size:22px;font-weight:600;text-shadow:0 2px 8px #000;opacity:0;transition:opacity .3s;text-align:center}
+.screen{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(ellipse at center,rgba(10,25,15,.88),rgba(0,0,0,.96));padding:24px}
+.screen h1{font-size:clamp(34px,6vw,72px);margin:0 0 6px;letter-spacing:6px}
+.screen p{max-width:640px;color:#b7c9bb;line-height:1.6}
+.screen.over h1{color:#ff3b30}.screen.win h1{color:#7dff9b}
+button{margin-top:20px;padding:14px 38px;font-size:18px;letter-spacing:3px;font-weight:700;background:#7dff9b;color:#06130a;border:0;border-radius:6px;cursor:pointer}
+button:hover{background:#b5ffc8}button:disabled{opacity:.4;cursor:wait}
+.keys{display:grid;grid-template-columns:repeat(2,auto);gap:4px 26px;margin-top:16px;font-size:14px;color:#9fb5a4;text-align:left}
+.keys b{color:#fff}
+#warn{color:#ffc857;font-size:13px;margin-top:10px;max-width:560px}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud">
+  <div id="cross"></div><div id="hit"></div>
+  <div id="mission" class="panel">OBJETIVO: <b>llegar a la zona de extracción</b><br>Zombis restantes: <b id="zleft">0</b><br>Distancia: <b id="dist">0</b> m</div>
+  <div id="slots" class="panel"><span class="slot on" id="s1">[1] PISTOLA</span><span class="slot" id="s2">[2] RIFLE</span></div>
+  <div id="ammoBox" class="panel"><div id="wname"></div><div class="ar"><span id="ammo">0</span><span id="res">/ 0</span></div><div id="rwrap"><div id="rbar"></div></div></div>
+  <div id="hint"></div><div id="crouch" class="panel">AGACHADO</div>
+  <div id="msg" class="panel"></div>
+</div>
+<div id="scr" class="screen">
+  <h1 id="stitle">OPERACIÓN EXTRACCIÓN</h1>
+  <p id="ssub">Cargando recursos…</p>
+  <div class="keys" id="keys"><span><b>W A S D</b> mover</span><span><b>Mouse</b> apuntar</span><span><b>Clic izq.</b> disparar (1 por clic)</span><span><b>1 / 2</b> cambiar arma</span><span><b>R</b> recargar</span><span><b>Espacio</b> agacharse</span><span><b>Shift</b> correr</span><span><b>T</b> linterna</span><span><b>Q</b> calidad gráfica</span><span><b>F3</b> diagnóstico</span><span><b>F</b> pantalla completa</span><span><b>Esc</b> pausa</span></div>
+  <div id="warn"></div>
+  <button id="sbtn" disabled>CARGANDO</button>
+</div>
+<script type="module" src="main.js"></script>
+</body>
+</html>
